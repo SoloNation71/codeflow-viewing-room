@@ -8,3 +8,15 @@ export interface Video {
   duration: string;
   category: string;
 }
+
+export interface VideoProgress {
+  videoId: string;
+  progress: number; // Percentage progress (0-100)
+  lastPosition: number; // Time in seconds
+  completed: boolean;
+  lastWatched: string; // ISO date string
+}
+
+export interface VideoWithProgress extends Video {
+  progress?: VideoProgress;
+}

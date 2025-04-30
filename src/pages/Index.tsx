@@ -1,10 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MatrixBackground from '@/components/MatrixBackground';
 import Header from '@/components/Header';
 import VideoPlayer from '@/components/VideoPlayer';
 import VideoLibrary from '@/components/VideoLibrary';
-import { Video } from '@/types/video';
+import { Video, VideoProgress } from '@/types/video';
 
 // Mock data for videos
 const MOCK_VIDEOS: Video[] = [
@@ -66,6 +66,53 @@ const MOCK_VIDEOS: Video[] = [
 
 const Index = () => {
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  const [videoProgress, setVideoProgress] = useState<Record<string, VideoProgress>>({});
+  
+  // Load progress data on component mount
+  useEffect(() => {
+    try {
+      const savedProgressString = localStorage.getItem('videoProgress');
+      if (savedProgressString) {
+        const savedProgress = JSON.parse(savedProgressString);
+        setVideoProgress(savedProgress);
+      }
+    } catch (error) {
+      console.error('Error loading video progress:', error);
+    }
+    
+    // If no video is selected but we have progress data,
+    // suggest the last watched video or the one with the least progress
+    if (!selectedVideo && Object.keys(videoProgress).length > 0) {
+      // Find the last watched video
+      let lastWatchedVideo: VideoProgress | null = null;
+      let lastWatchedDate = new Date(0);
+      
+      Object.values(videoProgress).forEach(progress => {
+        if (!progress.completed) {
+          const watchedDate = new Date(progress.lastWatched);
+          if (watchedDate > lastWatchedDate) {
+            lastWatchedDate = watchedDate;
+            lastWatchedVideo = progress;
+          }
+        }
+      });
+      
+      if (lastWatchedVideo) {
+        const video = MOCK_VIDEOS.find(v => v.id === lastWatchedVideo?.videoId);
+        if (video) {
+          setSelectedVideo(video);
+        }
+      }
+    }
+  }, []);
+  
+  // Handle progress updates from the video player
+  const handleProgressUpdate = (progress: VideoProgress) => {
+    setVideoProgress(prev => ({
+      ...prev,
+      [progress.videoId]: progress
+    }));
+  };
 
   return (
     <div className="flex flex-col min-h-screen overflow-x-hidden">
@@ -79,6 +126,7 @@ const Index = () => {
             <VideoPlayer 
               video={selectedVideo} 
               className="max-w-4xl mx-auto shadow-xl shadow-matrix/10"
+              onProgressUpdate={handleProgressUpdate}
             />
           </section>
           
