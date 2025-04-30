@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -24,6 +25,17 @@ export default {
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
+				matrix: {
+					DEFAULT: '#00FF41',
+					dark: '#0D8534',
+					light: '#4AFF03',
+					glow: 'rgba(0, 255, 65, 0.6)',
+				},
+				dark: {
+					DEFAULT: '#0a0e17',
+					secondary: '#121212',
+					tertiary: '#1a1a1a',
+				},
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
@@ -84,11 +96,40 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'matrix-rain': {
+					'0%': { 
+						transform: 'translateY(-100%)',
+						opacity: '1'
+					},
+					'100%': { 
+						transform: 'translateY(1000%)',
+						opacity: '0'
+					}
+				},
+				'pulse-glow': {
+					'0%, 100%': { 
+						boxShadow: '0 0 10px 1px rgba(0, 255, 65, 0.4)'
+					},
+					'50%': { 
+						boxShadow: '0 0 20px 4px rgba(0, 255, 65, 0.6)'
+					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+					},
+					'100%': {
+						opacity: '1',
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'matrix-rain': 'matrix-rain 10s linear infinite',
+				'pulse-glow': 'pulse-glow 2s infinite',
+				'fade-in': 'fade-in 0.5s ease-in-out',
 			}
 		}
 	},
